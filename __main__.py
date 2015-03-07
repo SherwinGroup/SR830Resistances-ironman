@@ -7,7 +7,7 @@ Created on Thu Jan 29 10:28:08 2015
 
 import numpy as np
 from PyQt4 import QtCore, QtGui
-from Instruments import Keithley2400Instr, SR830Instr
+from InstsAndQt.Instruments import Keithley2400Instr, SR830Instr
 from settings_ui import Ui_Dialog
 from MainWindow_ui import Ui_MainWindow
 import re
@@ -387,7 +387,7 @@ class Win(QtGui.QMainWindow):
         st += '\nMeasured every: '+ str(self.measureEvery)
         st += '\nCompliance(A): ' + str(self.settings['kCompliance'])
         st += '\nSeries Resistor(Ohms): ' + str(self.settings['seriesResistance'])
-        st += self.settings['saveComments']
+        st += '\n'+self.settings['saveComments']
         return st
             
     
