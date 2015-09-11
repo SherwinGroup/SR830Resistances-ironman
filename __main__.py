@@ -52,7 +52,7 @@ class Win(QtGui.QMainWindow):
         self.settings['measureReverse'] = False
         self.settings['stepSleep'] = 0.2
         self.settings['kCompliance'] = 1e-3
-        self.settings['seriesResistance'] = 1e6
+        self.settings['seriesResistance'] = 10e6
         self.settings['GPIBChoices'] = []
         
         self.openKeith()
@@ -158,6 +158,8 @@ class Win(QtGui.QMainWindow):
         oldkGPIB = self.settings['kGPIB']
         oldsGPIB = self.settings['sGPIB']
 
+        if self.settings["kCompliance"] != newSettings['kCompliance']:
+            self.keith.setCompliance(newSettings['kCompliance'])
         self.settings = newSettings
         print oldkGPIB, newSettings['kGPIB']
         if not oldkGPIB == newSettings['kGPIB']:
@@ -169,6 +171,7 @@ class Win(QtGui.QMainWindow):
             self.SR830.close()
             self.settings['sGPIB'] = newSettings['sGPIB']
             self.openSR830()
+
             
                 
         
@@ -337,7 +340,7 @@ class Win(QtGui.QMainWindow):
     def doRamp(self, voltage):
         self.voltage = voltage
         self.keith.setVoltage(voltage)
-        time.sleep(self.settings['stepSleep'])
+        time.sleep(self.settings['stepSleep']/10)
         self.statusSig.emit('Ramping. Voltage: '+str(voltage))
         
     def doMeasurementPoint(self, voltage, reverse = False):
@@ -345,7 +348,7 @@ class Win(QtGui.QMainWindow):
         self.statusSig.emit('Measuring. Voltage: '+str(voltage))
         self.keith.setVoltage(voltage)
         ret = False
-        time.sleep(.1) #Sleep incase there's a lag between updating the scope
+        time.sleep(self.settings['stepSleep']) #Sleep incase there's a lag between updating the scope
         if self.settings['measurePhase']:
             #returns the magnitude of the measured voltage and the phase
             val = self.SR830.getMultiple('r', 't')
